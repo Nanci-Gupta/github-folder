@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expense Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* ===== Modern Base ===== */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color:#fff;
+  overflow-x:hidden;
+  min-height:100vh;
+  position:relative;
+}
+
+/* Floating Gradient Orbs */
+body::before, body::after {
+  content:"";
+  position:absolute;
+  width:400px; height:400px;
+  background:radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);
+  border-radius:50%;
+  filter:blur(80px);
+  animation: float 10s infinite alternate;
+  z-index:0;
+}
+body::after {
+  top:30%; left:70%;
+  animation-delay:3s;
+}
+@keyframes float {
+  from { transform:translate(0,0) scale(1); }
+  to { transform:translate(-50px,30px) scale(1.2); }
+}
+
+/* ===== Navbar ===== */
+.navbar {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px);
+  border:1px solid rgba(255,255,255,0.2);
+  color:#fff; display:flex; justify-content:space-between; align-items:center;
+  padding:15px 40px; box-shadow:0 4px 20px rgba(0,0,0,0.2);
+  position:sticky; top:0; z-index:10;
+  border-radius:0 0 20px 20px;
+}
+.navbar h1 {
+  font-size:26px; letter-spacing:1px; font-weight:600;
+}
+.navbar a {
+  margin-left:25px; font-weight:500;
+  transition:0.3s; position:relative;
+  
+}
+.navbar a::after {
+  content:""; position:absolute; bottom:-5px; left:0;
+  width:0; height:2px; background:#ffdd57; transition:0.3s;
+}
+.navbar a:hover::after { width:100%; }
+.navbar a:hover { color:#ffdd57; }
+
+/* ===== Container ===== */
+.container {
+  max-width:1100px; margin:40px auto; padding:20px;
+  position:relative; z-index:1;
+}
+
+/* ===== Cards & Sections ===== */
+.card-section { margin-bottom:60px; }
+h2 { text-align:center; margin-bottom:25px; font-weight:600; text-shadow:0 0 10px rgba(255,255,255,0.2); }
+
+.card {
+  background: rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(15px);
+  border-radius:20px;
+  padding:25px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.2);
+  transition: all 0.4s ease;
+}
+.card:hover {
+  transform:translateY(-8px);
+  box-shadow:0 15px 40px rgba(0,0,0,0.3);
+}
+
+/* ===== Inputs & Buttons ===== */
+input, select {
+  padding:12px; margin:10px 0; border-radius:10px;
+  border:none; width:100%;
+  background:rgba(255,255,255,0.2);
+  color:#fff; font-size:15px;
+  transition:0.3s;
+}
+input::placeholder { color:rgba(255,255,255,0.7); }
+input:focus, select:focus {
+  outline:none;
+  box-shadow:0 0 10px rgba(255,255,255,0.5);
+}
+button {
+  padding:12px 20px;
+  border:none; border-radius:10px;
+  background:linear-gradient(90deg,#ffdd57,#fbbf24);
+  color:#000; font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+  box-shadow:0 4px 10px rgba(255,221,87,0.3);
+}
+button:hover {
+  transform:scale(1.05);
+  box-shadow:0 8px 20px rgba(255,221,87,0.5);
+}
+
+/* ===== Table ===== */
+table {
+  width:100%; border-collapse:collapse;
+  margin-top:15px;
+  color:#fff;
+}
+th, td {
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  padding:12px; text-align:center;
+}
+th {
+  background:rgba(255,255,255,0.1);
+  font-weight:600;
+}
+tbody tr:hover {
+  background:rgba(255,255,255,0.1);
+  transform:scale(1.02);
+  transition:0.3s;
+}
+
+/* ===== Summary Cards ===== */
+.summary-cards {
+  display:flex; justify-content:space-around; flex-wrap:wrap; gap:20px;
+}
+.summary-card {
+  background:rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(12px);
+  color:#fff; padding:25px; border-radius:20px;
+  width:30%; text-align:center;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+  transition:0.4s;
+}
+.summary-card:hover {
+  transform:translateY(-6px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+#balanceDisplay {
+  font-weight:bold; font-size:22px;
+}
+
+/* ===== Chart ===== */
+.chart-container {
+  width:100%; max-width:600px; margin:auto;
+  background:rgba(255,255,255,0.1);
+  border-radius:20px; padding:20px;
+  backdrop-filter:blur(15px);
+  box-shadow:0 8px 30px rgba(0,0,0,0.3);
+}
+
+/* ===== Footer ===== */
+footer {
+  text-align:center;
+  padding:20px;
+  background:rgba(255,255,255,0.1);
+  color:#fff;
+  border-top:1px solid rgba(255,255,255,0.2);
+  backdrop-filter:blur(12px);
+  margin-top:50px;
+  border-radius:20px 20px 0 0;
+}
+
+/* ===== Responsive ===== */
+@media(max-width:768px){ .summary-card{ width:45%; } }
+@media(max-width:480px){
+  .summary-card{ width:100%; }
+  .navbar{ flex-direction:column; gap:10px; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <h1>💰 Expense Tracker</h1>
+  <div>
+    <a onclick="scrollToSection('salarySection')">Salary</a>
+    <a onclick="scrollToSection('addExpenseSection')">Add Expense</a>
+    <a onclick="scrollToSection('summarySection')">Summary</a>
+    <a onclick="scrollToSection('chartSection')">Visualization</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Salary Section -->
+  <section id="salarySection" class="card-section">
+    <h2>Set Monthly Salary</h2>
+    <div class="card">
+      <input type="number" id="salaryInput" placeholder="Enter salary"><br><br>
+      <button onclick="setSalary()">Save Salary</button><br><br>
+      <p>Your Salary: ₹<span id="displaySalary">0</span></p>
+    </div>
+  </section>
+
+  <!-- Add Expense Section -->
+  <section id="addExpenseSection" class="card-section">
+    <h2>Add Expense</h2>
+    <div class="card">
+      <input type="text" id="desc" placeholder="Description">
+      <input type="number" id="amount" placeholder="Amount">
+      <select id="category">
+        <option value="Groceries">Groceries 🛒</option>
+        <option value="Transport">Transport 🚗</option>
+        <option value="Entertainment">Entertainment 🎮</option>
+        <option value="Bills">Bills 💡</option>
+        <option value="Others">Others 📝</option>
+      </select><br><br>
+      <button onclick="addExpense()">Add Expense</button>
+    </div>
+
+    <h3 style="margin-top:50px;">Expense List</h3><br><br>
+    <div class="card">
+      <table id="expenseTable">
+        <thead>
+          <tr><th>Description</th><th>Amount</th><th>Category</th><th>Action</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Summary Section -->
+  <section id="summarySection" class="card-section">
+    <h2>Summary</h2>
+    <div class="summary-cards">
+      <div class="summary-card">
+        <h3>Total Salary</h3>
+        <p>₹<span id="totalSalary">0</span></p>
+      </div>
+      <div class="summary-card">
+        <h3>Total Expenses</h3>
+        <p>₹<span id="totalExpense">0</span></p>
+      </div>
+      <div class="summary-card">
+        <h3>Remaining Balance</h3>
+        <p id="balanceDisplay">₹<span id="balance">0</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chart Section -->
+  <section id="chartSection" class="card-section">
+    <h2>Expense Visualization</h2>
+    <div class="chart-container">
+      <canvas id="expenseChart"></canvas>
+    </div>
+  </section>
+</div>
+
+<footer>
+  &copy; 2025 Expense Tracker | Designed with 💜
+</footer>
+
+<script>
+let salary = 0;
+let expenses = [];
+let chart;
+
+// Smooth Scroll
+function scrollToSection(id){
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+function setSalary(){
+  const input = document.getElementById('salaryInput').value;
+  if(!input || input < 0){ alert("Enter valid salary"); return; }
+  salary = parseFloat(input);
+  document.getElementById('displaySalary').innerText = salary;
+  localStorage.setItem('salary', salary);
+  updateSummary();
+}
+
+function addExpense(){
+  const desc = document.getElementById('desc').value;
+  const amount = parseFloat(document.getElementById('amount').value);
+  const category = document.getElementById('category').value;
+  if(!desc || isNaN(amount) || amount <= 0){ alert("Enter valid expense"); return; }
+
+  expenses.push({desc, amount, category});
+  localStorage.setItem('expenses', JSON.stringify(expenses));
+  renderExpenses();
+  updateSummary();
+
+  document.getElementById('desc').value='';
+  document.getElementById('amount').value='';
+}
+
+function renderExpenses(){
+  const tbody = document.querySelector('#expenseTable tbody');
+  tbody.innerHTML = '';
+  expenses.forEach((exp, i)=>{
+    const row = document.createElement('tr');
+    row.innerHTML=`<td>${exp.desc}</td><td>₹${exp.amount}</td><td>${exp.category}</td>
+    <td><button onclick="deleteExpense(${i})" style="background:red;color:white;border:none;padding:6px 10px;border-radius:6px;">Delete</button></td>`;
+    tbody.appendChild(row);
+  });
+}
+
+function deleteExpense(index){
+  expenses.splice(index,1);
+  localStorage.setItem('expenses', JSON.stringify(expenses));
+  renderExpenses();
+  updateSummary();
+}
+
+function updateSummary(){
+  const totalExp = expenses.reduce((sum,e)=>sum+e.amount,0);
+  document.getElementById('totalSalary').innerText = salary;
+  document.getElementById('totalExpense').innerText = totalExp;
+
+  const balance = salary - totalExp;
+  document.getElementById('balance').innerText = balance;
+  document.getElementById('balanceDisplay').style.color = balance < 0 ? '#ff5555' : '#90EE90';
+  updateChart();
+}
+
+function updateChart(){
+  const ctx = document.getElementById('expenseChart').getContext('2d');
+  const categories = {};
+  expenses.forEach(e=>categories[e.category]=(categories[e.category]||0)+e.amount);
+  const labels = Object.keys(categories);
+  const data = Object.values(categories);
+
+  if(chart) chart.destroy();
+
+  chart = new Chart(ctx,{
+    type:'doughnut',
+    data:{labels,datasets:[{
+      label:'Expenses',
+      data,
+      backgroundColor:['#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF'],
+      borderWidth:1,
+      hoverOffset:12
+    }]},
+    options:{ plugins:{ legend:{ labels:{ color:'#fff' } } } }
+  });
+}
+
+window.onload = function(){
+  salary = parseFloat(localStorage.getItem('salary'))||0;
+  expenses = JSON.parse(localStorage.getItem('expenses'))||[];
+  document.getElementById('displaySalary').innerText = salary;
+  renderExpenses();
+  updateSummary();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EcoStore | Sustainable Shopping</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        
+        :root {
+            --eco-dark-green: #004d40; 
+            --eco-green: #00695c; 
+            --eco-light-green: #388e3c;
+            --eco-bg-light: #f8f8f8;
+        }
+
+        /* --- Global & Base Styles --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f9fafb;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --- Navbar --- */
+        .navbar {
+            background: var(--eco-green); /* Using a solid color for consistency */
+        }
+        .navbar-brand:hover {
+            color: #fff;
+            opacity: 0.9;
+        }
+        #cartBtn {
+            background-color: var(--eco-dark-green);
+            border-color: var(--eco-dark-green);
+            transition: background 0.3s;
+        }
+        #cartBtn:hover {
+            background-color: var(--eco-light-green);
+            border-color: var(--eco-light-green);
+        }
+
+        /* --- Hero --- */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f') center/cover no-repeat;
+            /* FIX 1: Parallax scroll for subtle effect */
+            background-attachment: fixed; 
+        }
+
+        .hero h1 { color: #fff; }
+        .hero p { color: #e0f2f1; }
+        .hero .btn-light { 
+            background-color: #fff; 
+            color: var(--eco-dark-green);
+            border: 2px solid var(--eco-dark-green);
+            font-weight: 700 !important;
+        }
+        .hero .btn-light:hover { 
+            background-color: var(--eco-dark-green);
+            color: #fff; 
+            border-color: #fff;
+        }
+
+        /* --- Product Cards --- */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            /* ENHANCEMENT 2: Green shadow for branding */
+            box-shadow: 0 8px 20px rgba(0, 77, 64, 0.2); 
+        }
+
+        .card img {
+            border-radius: 15px 15px 0 0;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .price {
+            color: var(--eco-dark-green); /* Consistent brand color */
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .btn-add {
+            background-color: var(--eco-dark-green); /* Consistent brand color */
+            border: none;
+            transition: background 0.3s;
+        }
+
+        .btn-add:hover {
+            background-color: var(--eco-light-green);
+        }
+
+        /* --- Cart Offcanvas --- */
+        .footer {
+            background: var(--eco-dark-green);
+        }
+
+        #cartItems img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        /* --- About EcoStore Styles --- */
+        .about-section {
+            padding: 80px 20px 40px 20px;
+            background: var(--eco-bg-light);
+            color: #333;
+        }
+
+        .about-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        /* ... existing about-text, about-image animations ... */
+        .about-text { opacity: 0; transform: translateX(-50px); transition: all 1s ease; flex: 1 1 500px;}
+        .about-image { opacity: 0; transform: translateX(50px); transition: all 1s ease; flex: 1 1 400px; text-align: center;}
+        .about-section.visible .about-text,
+        .about-section.visible .about-image { opacity: 1; transform: translateX(0); }
+
+        .about-image img {
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* --- Policy Grid Location --- */
+        .policy-grid-new {
+            padding: 40px 0 0 0;
+            background: var(--eco-bg-light);
+        }
+        
+        .policy-grid {
+            display: flex;
+            flex-wrap: nowrap; 
+            justify-content: space-between;
+            gap: 10px; 
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 20px;
+        }
+        
+        .policy-item {
+            flex: 1 0 150px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .policy-icon {
+            font-size: 30px;
+            /* ENHANCEMENT 1: Green icon color */
+            color: var(--eco-dark-green); 
+            margin-bottom: 15px;
+        }
+
+        /* --- Newsletter Section --- */
+        .newsletter-section {
+            padding: 40px 0 80px 0;
+            text-align: center;
+        }
+
+        .subscribe-form input[type="email"] {
+            padding: 12px 20px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-right: none;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .subscribe-form button {
+            padding: 12px 25px;
+            background: var(--eco-dark-green); /* Consistent brand color */
+            border: 1px solid var(--eco-dark-green);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .subscribe-form button:hover {
+            background: var(--eco-light-green);
+            border-color: var(--eco-light-green);
+        }
+
+        /* --- Responsive Design --- */
+        @media screen and (max-width: 900px) {
+            
+            .subscribe-form {
+                flex-direction: column;
+                align-items: center;
+            }
+            .subscribe-form input[type="email"] {
+                width: 80%;
+                max-width: 300px;
+                border-right: 1px solid #ccc;
+                border-bottom: none;
+                margin-bottom: -1px;
+            }
+            .subscribe-form button {
+                width: 80%;
+                max-width: 342px;
+            }
+            .about-content {
+                flex-direction: column-reverse;
+                text-align: center;
+            }
+        }
+    </style>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+      <div class="container">
+        <a class="navbar-brand fw-bold text-light" href="#">EcoStore</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="#products">Products</a></li>
+            <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          </ul>
+          <div class="d-flex align-items-center">
+            <input id="searchInput" class="form-control me-2 rounded-pill" placeholder="Search..." style="max-width:200px;">
+            <button class="btn btn-primary position-relative rounded-pill" id="cartBtn" data-bs-toggle="offcanvas" data-bs-target="#cartCanvas">
+              <i class="bi bi-cart-fill"></i> Cart <span id="cartCount" class="badge bg-danger ms-2">0</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero d-flex align-items-center justify-content-center text-center text-white">
+      <div>
+        <h1 class="display-4 fw-bold">Shop Smart, Shop Green</h1>
+        <p class="lead">Discover eco-friendly essentials that make a difference.</p>
+        <a href="#products" class="btn btn-lg btn-light rounded-pill px-4 fw-semibold">Explore Products</a>
+      </div>
+    </header>
+
+    
+
+    <section id="products" class="container py-5">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold">Our Featured Products</h2>
+        <p class="text-muted">Handpicked sustainable items just for you.</p>
+      </div>
+      <div class="text-center mb-4">
+          <button class="btn btn-outline-secondary btn-sm me-2" onclick="displayProducts('')">All</button>
+          <button class="btn btn-outline-secondary btn-sm me-2" onclick="displayProducts('t-shirt')">Clothing</button>
+          <button class="btn btn-outline-secondary btn-sm me-2" onclick="displayProducts('bottle')">Home Goods</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="displayProducts('comb')">Self-Care</button>
+      </div>
+      <div id="productGrid" class="row g-4">
+        </div>
+    </section>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartCanvas">
+      <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-bold">Your Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+      </div>
+      <div class="offcanvas-body d-flex flex-column">
+        <div id="cartItems" class="flex-grow-1 overflow-auto"></div>
+        <div class="border-top pt-3">
+          <p class="fw-semibold">Total: <span id="cartTotal" class="text-success">₹0.00</span></p>
+          <button id="checkoutBtn" class="btn btn-success w-100 rounded-pill">Checkout</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About EcoStore</h2>
+                    <p>EcoStore is your go-to online store for sustainable and eco-friendly products. 
+                    Our mission is to provide high-quality products that are good for you and the planet.</p>
+                    
+                    <p><strong>Our Speciality:</strong> Curated organic, reusable, and sustainable products that reduce environmental impact.</p>
+                    
+                    <p><strong>Why Choose Us:</strong> Unlike other stores, we focus on true sustainability, ethical sourcing, and educating customers about eco-conscious living.</p>
+                </div>
+
+                <div class="about-image">
+                    <img src="https://media.istockphoto.com/id/1411289606/photo/paper-eco-friendly-disposable-tableware-with-recycling-signs-on-the-background-of-green-plants.jpg?s=612x612&w=0&k=20&c=ng731oZuBvrja5tNFkrcW-hWtWJqieyxw3A2HSei0QI=" alt="Eco-friendly Store">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="policy-grid-new">
+        <div class="container">
+            <div class="policy-grid">
+                <div class="policy-item">
+                    <i class="fas fa-undo policy-icon"></i>
+                    <h4>Easy Exchange Policy</h4>
+                    <p>We offer hassle free exchange policy</p>
+                </div>
+                <div class="policy-item">
+                    <i class="fas fa-check-circle policy-icon"></i>
+                    <h4>7 Days Return Policy</h4>
+                    <p>We provide 7 days free return policy</p>
+                </div>
+                <div class="policy-item">
+                    <i class="fas fa-headset policy-icon"></i>
+                    <h4>Best customer support</h4>
+                    <p>we provide 24/7 customer support</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="newsletter-section">
+        <div class="container">
+            <h3>Subscribe now & get 20% off</h3>
+            <p>Lorem ipsum is simply dummy text of the printing and typesetting industry.</p>
+            <form class="subscribe-form">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit">SUBSCRIBE</button>
+            </form>
+        </div>
+    </section>
+
+
+    <footer class="footer text-center py-4 text-white">
+      <p class="mb-0">© 2025 EcoStore | Designed with ❤️ for Sustainability</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const products = [
+            {id:1, name:'Organic Cotton T-Shirt', price:499, img:'https://media.istockphoto.com/id/1490755900/photo/natural-organic-cotton-t-shirt-with-label-eco-clothes-sustainable-lifestyle-concept.webp?a=1&b=1&s=612x612&w=0&k=20&c=vfAqsyJTDLfXWW9XK7c96D5syOK2QI1jck3HI0DmPZw='},
+            {id:2, name:'Bamboo Toothbrush Set', price:199, img:'https://images.unsplash.com/photo-1617984161716-189c889bd474?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fEJhbWJvbyUyMFRvb3RoYnJ1c2glMjBTZXR8ZW58MHx8MHx8fDA%3D'},
+            {id:3, name:'Reusable Water Bottle', price:799, img:'https://plus.unsplash.com/premium_photo-1664527307281-faf42c09ac8f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8UmV1c2FibGUlMjBXYXRlciUyMEJvdHRsZXxlbnwwfHwwfHx8MA%3D%3D'},
+            {id:4, name:'Eco Tote Bag', price:299, img:'https://media.istockphoto.com/id/1185049680/photo/eco-friendly-beige-colour-fashion-canvas-tote-bag.webp?a=1&b=1&s=612x612&w=0&k=20&c=kS2gOaR96U7MdN6ijNila1UGhSj_qcUsKUjQqUZ8WcU='},
+            {id:5, name:'Solar Desk Lamp', price:1299, img:'https://plus.unsplash.com/premium_photo-1672166939591-b2547bd18fca?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8U29sYXIlMjBEZXNrJTIwTGFtcHxlbnwwfHwwfHx8MA%3D%3D'},
+            {id:6, name:'Compostable Plates Pack', price:249, img:'https://images.unsplash.com/photo-1727021024931-90c226e8448d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Q29tcG9zdGFibGUlMjBQbGF0ZXMlMjBQYWNrfGVufDB8fDB8fHww'},
+            {id:7, name:'Wooden Hair Comb', price:149, img:'https://media.istockphoto.com/id/1263765801/photo/wooden-comb-on-a-white-background.webp?a=1&b=1&s=612x612&w=0&k=20&c=rqIvlTmi880ebk2CmAs9EdimDJWhJ6vVWtdKqAAyZ7A='},
+            {id:8, name:'Jute Storage Basket', price:499, img:'https://images.unsplash.com/photo-1758487424832-a53ae6cdefdb?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8SnV0ZSUyMFN0b3JhZ2UlMjBCYXNrZXR8ZW58MHx8MHx8fDA%3D'},
+            {id:9, name:'Biodegradable Cutlery Set', price:299, img:'https://media.istockphoto.com/id/2217225343/photo/disposable-eco-paper-cups-and-wooden-forks-on-green-background-flat-lay-view.webp?a=1&b=1&s=612x612&w=0&k=20&c=-zywoifXjAvr0ycGyUZ1JVsxhO-wBUlg07StKQvMjZM='},
+            {id:10, name:'Recycled Paper Notebook', price:99, img:'https://plus.unsplash.com/premium_photo-1756142083984-0c2b2c4a056f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8UmVjeWNsZWQlMjBQYXBlciUyME5vdGVib29rfGVufDB8fDB8fHww'},
+            {id:11, name:'Recycled polyester jackets or hoodies', price:199, img:'https://plus.unsplash.com/premium_photo-1700053641043-8cc03ce39b29?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8UmVjeWNsZWQlMjBwb2x5ZXN0ZXIlMjBqYWNrZXRzJTIwb3IlMjBob29kaWVzfGVufDB8fDB8fHww'},
+            {id:12, name:'Organic Cotton', price:199, img:'https://plus.unsplash.com/premium_photo-1675799719530-57e65cef0f2e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8b3JnYW5pYyUyMGNvdHRvbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600'},
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function displayProducts(filter='') {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            const filtered = products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
+            
+            if(filtered.length === 0) {
+                 grid.innerHTML = '<div class="col-12 text-center text-muted py-5">No products found matching your search.</div>';
+                 return;
+            }
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'col-sm-6 col-md-4 col-lg-3';
+                card.innerHTML = `
+                    <div class="card h-100">
+                        <img src="${p.img}" alt="${p.name}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">${p.name}</h5>
+                            <p class="price">₹${p.price}</p>
+                            <button class="btn btn-add text-white mt-auto rounded-pill" onclick="addToCart(${p.id})">Add to Cart</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        displayProducts();
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+            if(existing) existing.qty++;
+            else cart.push({...product, qty:1});
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        function updateCart() {
+            const container = document.getElementById('cartItems');
+            container.innerHTML = '';
+            let total = 0;
+            if(cart.length === 0){
+                container.innerHTML = '<p class="text-muted text-center">Your cart is empty.</p>';
+                document.getElementById('cartCount').textContent = 0;
+                document.getElementById('cartTotal').textContent = '₹0.00';
+                return;
+            }
+            cart.forEach(item => {
+                total += item.price * item.qty;
+                const div = document.createElement('div');
+                div.className = 'cart-item d-flex align-items-center justify-content-between';
+                div.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <img src="${item.img}" alt="${item.name}" class="me-2">
+                        <div>
+                            <div class="fw-semibold">${item.name}</div>
+                            <small class="text-muted">₹${item.price} x ${item.qty}</small>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary me-1" onclick="changeQty(${item.id}, -1)">-</button>
+                        <button class="btn btn-sm btn-outline-secondary me-1" onclick="changeQty(${item.id}, 1)">+</button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeItem(${item.id})"><i class="bi bi-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            document.getElementById('cartCount').textContent = cart.reduce((s,i)=>s+i.qty,0);
+            document.getElementById('cartTotal').textContent = `₹${total.toFixed(2)}`;
+        }
+
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if(!item) return;
+            item.qty += delta;
+            if(item.qty <= 0) cart = cart.filter(i => i.id !== id);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        function removeItem(id) {
+            cart = cart.filter(i => i.id !== id);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+        }
+
+        // ENHANCEMENT: Clear and simple checkout alert
+        document.getElementById('checkoutBtn').addEventListener('click', () => {
+            if(cart.length > 0) {
+                alert('Thank you for choosing sustainability! Your order of ₹' + document.getElementById('cartTotal').textContent + ' has been placed.');
+                cart = [];
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCart();
+                // Close the offcanvas using Bootstrap's JS API
+                const cartCanvas = document.getElementById('cartCanvas');
+                const bsOffcanvas = bootstrap.Offcanvas.getInstance(cartCanvas);
+                if (bsOffcanvas) {
+                    bsOffcanvas.hide();
+                }
+            } else {
+                alert('Your cart is empty. Please add items before checking out.');
+            }
+        });
+
+
+        document.getElementById('searchInput').addEventListener('input', e => displayProducts(e.target.value));
+
+        updateCart();
+        
+        // About Section Scroll Animation Logic
+        const aboutSection = document.querySelector('.about-section');
+
+        function showAbout() {
+            const sectionPos = aboutSection.getBoundingClientRect().top;
+            const screenPos = window.innerHeight / 1.3;
+            
+            if(sectionPos < screenPos){
+                aboutSection.classList.add('visible');
+                window.removeEventListener('scroll', showAbout);
+            }
+        }
+
+        window.addEventListener('scroll', showAbout);
+        window.addEventListener('load', showAbout);
+    </script>
+  </body>
+</html>
